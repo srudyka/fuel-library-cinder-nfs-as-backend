@@ -1,0 +1,12 @@
+- id: cinder-nfs-as-backend
+  type: puppet
+  groups: [cinder]
+  required_for: [deploy_end]
+  requires: [top-role-cinder]
+  parameters:
+    puppet_manifest: /etc/puppet/modules/osnailyfacter/modular/cinder-nfs-as-backend/cinder_nfs_as_backend.pp
+    puppet_modules: /etc/puppet/modules
+    timeout: 1800
+
+
+
