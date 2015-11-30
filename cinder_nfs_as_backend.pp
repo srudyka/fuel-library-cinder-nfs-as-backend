@@ -24,7 +24,6 @@ define nfs_server_backend::cinder_backend_nfs (
   $nfs_oversub_ratio    = '1.0',
   $extra_options        = {},
 ) {
-# include cinder::params
 
   file {$nfs_shares_config:
     content => "${nfs_servers}:${nfs_root_path} \n",
@@ -65,8 +64,6 @@ class nfs_server_backend::install  {
     }
   }
 
-# include cinder::params
-
   package { $pkg_name_client:
     ensure => installed,
   }
@@ -98,11 +95,17 @@ class nfs_server_backend::install  {
   service { $::cinder::params::volume_service:
     ensure => running,
   }
-  exec { 'cinder_mnt chown':
-    command  => "/bin/chown -R cinder:cinder ${mnt_dir}",
-  }
 
 }
 
 include  nfs_server_backend::install
 
+#
+# Exec is needed for changing owner folder inside of 
+# cinder directory (/var/lib/cinder/mnt) because mounting NFS transfer 
+# owner from NFS node mount point
+#
+
+exec { 'cinder_mnt chown':
+    command  => "/bin/chown -R cinder:cinder ${mnt_dir}",
+}
